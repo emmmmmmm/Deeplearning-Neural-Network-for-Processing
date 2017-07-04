@@ -1,4 +1,5 @@
-
+//------------------------------
+//
 //------------------------------
 class Network {
   Layer[] layers;
@@ -13,7 +14,7 @@ class Network {
   memory = new float[50];
   }
   //------------------------------
-  void setMemoryLength(int l) {    
+  void setMemoryLength(int l) {
     memory = new float[l];
    memoryLength = l;
   }
@@ -58,8 +59,9 @@ class Network {
     }
     ar[0]=val;
   }
-  
+
   //------------------------------
+  // forward through network
   float[] forward(float[] in) {
   //  push(memory, in[0]);
     layers[0].forward(in);
@@ -69,6 +71,7 @@ class Network {
     return layers[layers.length-1].Sy;
   }
   //------------------------------
+  // backwards through network
   void backward(float[] err) {
     layers[layers.length-1].backward(err);
     for (int i=layers.length-2; i>=0; i--) {
@@ -91,12 +94,11 @@ class Network {
     strokeWeight(1);
     for (int i=0; i<this.errorList.length-1; i++)
       line(
-      map(i, 0, errorList.length-1, 0, width), 
-      map(errorList[i], 0, max(errorList), height, 0), 
-      map(i+1, 0, errorList.length-1, 0, width), 
+      map(i, 0, errorList.length-1, 0, width),
+      map(errorList[i], 0, max(errorList), height, 0),
+      map(i+1, 0, errorList.length-1, 0, width),
       map(errorList[i+1], 0, max(errorList), height, 0)
         );
   }
   //------------------------------
 }
-

@@ -1,9 +1,22 @@
+//================================================
+// Neural Network class with deeplearning capabilities
+// to test performance of different types of cells.
+
+// Simple-Cell: standard FFNN Cell with SoftSign activation
+// Memory-Cell: Cell with weights for previous Inputs
+// MixGateCell: Cell that "mixes" current input and past OutputState
+//================================================
+// TODO:
+// implement BaseLayer and BaseCell class to add different network-topographies
+// and cells
+//================================================
+// globals:
 Network nn;
 float[] testErrorList=new float[0];
 
-
+//================================================
 void setup() {
-
+  // setup network:
   nn = new Network();
   nn.setMemoryLength(8); // doesn't do anything for lstmLight-Cells though... (except if i reset it somehow when a new pattern starts?? -> things to think about! )
   nn.addLayer(01, 50);
@@ -12,8 +25,8 @@ void setup() {
   nn.addLayer(20, 10);
   nn.addLayer(10, 02);
 
-  nn.lr = 1e-5;
-  nn.batchSize = 20;
+  nn.lr = 1e-5; // learningRate
+  nn.batchSize = 20; // set to 0 to disable batch-lerning
   //buildData();
   // buildLottoData();
    importData();
@@ -23,7 +36,8 @@ void setup() {
   strokeWeight(2);
   frameRate(100000);
 }
-
+//================================================
+// train network and display results
 void draw() {
 
   float err = nn.learn(trainingInput, trainingTarget);
@@ -78,10 +92,6 @@ void draw() {
 void keyPressed() {
   if (key=='+') nn.lr*=10;
   if (key=='-') nn.lr*=0.1;
-  if(key=='b') {
-    if(nn.batchSize!=0)nn.batchSize=0;
-    else nn.batchSize = 20;
-  }
   println(nn.lr);
 }
 
@@ -97,6 +107,7 @@ void displayError() {
     map(testErrorList[i+1], 0, max(testErrorList), height, 0)
       );
 }
+//------------------------------------------
 float min(float[][] ar) {
   float m = 100000000;
   for (int i=0; i<ar.length; i++)for (int j=0; j<ar[i].length; j++) if (ar[i][j]<m)m=ar[i][j];

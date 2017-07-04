@@ -1,10 +1,8 @@
-
-
 //================================
 // a simplified LSTM cell ("mix-gate-cell")
 //
 //================================
-class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?^^ ... idk... 
+class MixGateCell extends  BaseCell{ //  -> maybe do that with layers instead?^^ ... idk...
   float[] x,dx;
   float Sx, Sh;
   float G, dG;
@@ -17,7 +15,7 @@ class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?
   float learningRate = 1e-3;
 
   //================================
-  LSTMCellLight(int num, int t) {
+  MixGateCell(int num, int t) {
     numInputs = num;
     initArrays();
   }
@@ -30,7 +28,7 @@ class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?
     Wx = new float[numInputs];
     dWx= new float[numInputs];
     for (int i=0; i<Wx.length; i++) Wx[i] = initWeight(2);  //randomize Weights for Inputs
-    
+
     Wm[1] = 0.21f;  // hard init Weights for Mix-Gate
     Wm[0] = 1.2f;
   }
@@ -54,22 +52,22 @@ class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?
     Sx = 0;
   }
   //================================
-  // calculate gradients 
+  // calculate gradients
   public float[] backward(float error) {
 
     dSh = error;            // error for this timestep
-    dSh = dSoftSign(Sh) * dSh; // softsign    
+    dSh = dSoftSign(Sh) * dSh; // softsign
 
     dG = (Sx-ShPrev) * dSh;
     dSx = G * dSh;
 
-    dG = dSoftSign(G) * dG; // softsign 
+    dG = dSoftSign(G) * dG; // softsign
     dB += dG;
     dWm[0] += Sx * dG;
     dWm[1] += ShPrev*dG;
-    
-    dBx += dSx; 
-    dx = new float[dx.length]; 
+
+    dBx += dSx;
+    dx = new float[dx.length];
     for (int in=0; in<numInputs; in++) {
       dWx[in] += dSx * x[in];
       dx[in]  += dSx * Wx[in];
@@ -80,9 +78,9 @@ class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?
   // update weights and biases
   public void update(float lr) {
     learningRate = lr;
-    for (int i=0; i<Wx.length; i++) 
+    for (int i=0; i<Wx.length; i++)
       Wx[i] += dWx[i]*learningRate;
-    for (int i=0; i<Wm.length; i++) 
+    for (int i=0; i<Wm.length; i++)
       Wm[i] += dWm[i]*learningRate;
 
     Bx += dBx * learningRate;
@@ -91,9 +89,9 @@ class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?
 
     //generalize:
     if (false) {
-      for (int i=0; i<Wx.length; i++) 
+      for (int i=0; i<Wx.length; i++)
         Wx[i] *=0.99999f;
-      for (int i=0; i<Wm.length; i++) 
+      for (int i=0; i<Wm.length; i++)
         Wm[i]*=0.99999f;
     }
   }
@@ -113,8 +111,8 @@ class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?
   }
   //================================
   private void push(float[][] ar, float[] f) {
-    for (int i=1; i<ar.length; i++) 
-      for (int j=0; j<ar[i].length; j++) 
+    for (int i=1; i<ar.length; i++)
+      for (int j=0; j<ar[i].length; j++)
         ar[i-1][j] = ar[i][j];
     for (int j = 0; j < f.length; j++)
       ar[ar.length-1][j] = f[j];
@@ -137,4 +135,3 @@ class LSTMCellLight extends  BaseCell{ //  -> maybe do that with layers instead?
     return ret;
   }
 }
-
